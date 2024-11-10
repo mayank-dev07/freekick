@@ -26,21 +26,6 @@ import {
 // create the standard headers for this route (including CORS)
 const headers = createActionHeaders();
 
-/**
- * Handles the GET request for fetching and processing a challenge.
- *
- * @param req - The incoming request object.
- * @returns A JSON response containing the challenge details, actions, or an error message.
- *
- * The function performs the following steps:
- * 1. Parses the request URL and validates the challenge query parameters.
- * 2. Attempts to fetch the challenge using the provided challenge ID.
- * 3. If the challenge is not found or an error occurs during fetching, returns an appropriate error response.
- * 4. Checks if the challenge is already completed and returns a completed action response if true.
- * 5. Constructs the available actions for the challenge, including submitting a guess and betting.
- * 6. Returns a JSON response with the challenge details and available actions.
- * 7. Catches and logs any unknown errors, returning a generic error response.
- */
 export const GET = async (req: Request) => {
   console.log("request url", req.url);
 
@@ -62,7 +47,7 @@ export const GET = async (req: Request) => {
     }
     const challenger = challenge.wallet;
 
-    if (challenge.selectedGrid !== null) {
+    if (challenge.selectedPosition !== null) {
       // just say that challenge is already completed
       const completedAction: CompletedAction = {
         type: "completed",
@@ -93,28 +78,19 @@ export const GET = async (req: Request) => {
       {
         type: "transaction",
         label: "Submit Guess",
-        href: `/api/actions/challenge?challengeId=${challengeId}&vert_set={vert_set}&hor_set={hor_set}&bet={bet}`,
+        href: `/api/actions/challenge?challengeId=${challengeId}&position={position}&bet={bet}`,
         parameters: [
           {
-            name: "vert_set",
-            label: "(Top, Middle, Bottom)",
+            name: "position",
+            label: "select position",
             required: true,
-            type: "select",
+            type: "radio",
             options: [
-              { value: "top", label: "Top" },
-              { value: "middle", label: "Middle" },
-              { value: "bottom", label: "Bottom" },
-            ],
-          },
-          {
-            name: "hor_set",
-            label: "(Left, Center, Right)",
-            required: true,
-            type: "select",
-            options: [
-              { value: "left", label: "Left" },
+              { value: "top-left", label: "Top-Left" },
+              { value: "top-right", label: "Top-Right" },
               { value: "center", label: "Center" },
-              { value: "right", label: "Right" },
+              { value: "bottom-left", label: "Bottom-Left" },
+              { value: "bottom-right", label: "Bottom-Right" },
             ],
           },
           {
@@ -127,7 +103,6 @@ export const GET = async (req: Request) => {
                 label: `Match Bid: ${challenge.totalAmount} SOL`,
                 value: "play",
               },
-              // { label: "Give Up", value: "giveup" },
             ],
           },
         ],
@@ -158,7 +133,7 @@ export const POST = async (req: Request) => {
   try {
     const requestUrl = new URL(req.url);
     const body: ActionPostRequest = await req.json();
-    const { vert_set, hor_set, bet, challengeId } =
+    const { position, bet, challengeId } =
       validatedPOSTChallengeQueryParams(requestUrl);
 
     // Validate the client-provided input
@@ -218,7 +193,7 @@ export const POST = async (req: Request) => {
         links: {
           next: {
             type: "post",
-            href: `/api/actions/challenge/next-action?challengeId=${challengeId}&vert_set=${vert_set}&hor_set=${hor_set}&bet=${bet}`,
+            href: `/api/actions/challenge/next-action?challengeId=${challengeId}&position=${position}&bet=${bet}`,
           },
         },
       },

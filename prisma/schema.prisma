@@ -27,8 +27,8 @@ model Challenge {
   wallet              String
   initiator           User      @relation("InitiatedChallenges", fields: [wallet], references: [wallet])
   challengers         User[]    @relation("ReceivedChallenges")
-  gridIndex           Int
-  selectedGrid        Int?
+  position            String
+  selectedPosition    String?
   totalAmount         Float
   createChallengeSig  String
   correctGuessesSig   String[]  @default([])

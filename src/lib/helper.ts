@@ -1,24 +1,14 @@
 export function validatedCreateChallengeQueryParams(requestUrl: URL) {
-  let vert_set: string;
-  let hor_set: string;
+  let position: string;
   let amount: number;
 
   try {
-    vert_set = requestUrl.searchParams.get("vert_set")!;
-    if (!vert_set) throw "vert_set is required";
+    position = requestUrl.searchParams.get("position")!;
+    if (!position) throw "position is required";
   } catch (err) {
     console.log(err);
 
-    throw "Invalid input query parameter: vert_set";
-  }
-
-  try {
-    hor_set = requestUrl.searchParams.get("hor_set")!;
-    if (!hor_set) throw "hor_set is required";
-  } catch (err) {
-    console.log(err);
-
-    throw "Invalid input query parameter: hor_set";
+    throw "Invalid input query parameter: position";
   }
 
   try {
@@ -31,19 +21,11 @@ export function validatedCreateChallengeQueryParams(requestUrl: URL) {
   }
 
   return {
-    vert_set,
-    hor_set,
+    position,
     amount,
   };
 }
 
-/**
- * Validates and extracts the `challengeId` query parameter from the given URL.
- *
- * @param requestUrl - The URL object containing the query parameters.
- * @returns An object containing the `challengeId`.
- * @throws Will throw an error if the `challengeId` is missing or invalid.
- */
 export function validatedChallengeQueryParams(requestUrl: URL) {
   let challengeId: string;
   try {
@@ -60,26 +42,14 @@ export function validatedChallengeQueryParams(requestUrl: URL) {
   };
 }
 
-/**
- * Validates and extracts the query parameters from a POST challenge request URL.
- *
- * @param {URL} requestUrl - The URL object containing the query parameters.
- * @returns {{ guess: number, bet: string, challengeId: string }} An object containing the validated `guess`, `bet`, and `challengeId` parameters.
- * @throws Will throw an error if any of the required query parameters are missing or invalid.
- *
- * The function performs the following validations:
- * - `challengeId` must be present.
- * - `guess` must be a number between 0 and 2.
- * - `bet` must be present.
- */
 export function validatedPOSTChallengeQueryParams(requestUrl: URL): {
-  vert_set: string;
-  hor_set: string;
+  position: string;
+
   bet: string;
   challengeId: string;
 } {
-  let vert_set: string;
-  let hor_set: string;
+  let position: string;
+
   let bet: string;
   let challengeId: string;
 
@@ -93,22 +63,14 @@ export function validatedPOSTChallengeQueryParams(requestUrl: URL): {
   }
 
   try {
-    vert_set = requestUrl.searchParams.get("vert_set")!;
-    if (!vert_set) throw "vert_set is required";
+    position = requestUrl.searchParams.get("position")!;
+    if (!position) throw "position is required";
   } catch (err) {
     console.log(err);
 
-    throw "Invalid input query parameter: vert_set";
+    throw "Invalid input query parameter: position";
   }
 
-  try {
-    hor_set = requestUrl.searchParams.get("hor_set")!;
-    if (!hor_set) throw "hor_set is required";
-  } catch (err) {
-    console.log(err);
-
-    throw "Invalid input query parameter: hor_set";
-  }
   try {
     bet = requestUrl.searchParams.get("bet")!;
     if (!bet) throw "bet is required";
@@ -119,21 +81,13 @@ export function validatedPOSTChallengeQueryParams(requestUrl: URL): {
   }
 
   return {
-    vert_set,
-    hor_set,
+    position,
     bet,
     challengeId,
   };
 }
 
-/**
- * Calculates the grid index based on the provided vertical and horizontal sets.
- *
- * @param vert_set - The vertical position, which can be 'top', 'middle', or 'bottom'.
- * @param hor_set - The horizontal position, which can be 'left', 'middle', or 'right'.
- * @returns The calculated grid index as a number.
- */
-export function calculateGridIndex(vert_set: string, hor_set: string): number {
+export function calculateGridIndex(position: string, hor_set: string): number {
   const verticalMap: { [key: string]: number } = {
     top: 0,
     middle: 1,
@@ -146,7 +100,7 @@ export function calculateGridIndex(vert_set: string, hor_set: string): number {
     right: 2,
   };
 
-  const verticalIndex = verticalMap[vert_set.toLowerCase()];
+  const verticalIndex = verticalMap[position.toLowerCase()];
   const horizontalIndex = horizontalMap[hor_set.toLowerCase()];
 
   // console.log("verticalIndex", verticalIndex * 3 + horizontalIndex);

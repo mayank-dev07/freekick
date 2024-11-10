@@ -14,30 +14,16 @@ import { PublicKey } from "@solana/web3.js";
 // Create the standard headers for this route (including CORS)
 const headers = createActionHeaders();
 
-/**
- * Handles GET requests.
- * @param req - The request object.
- * @returns A response indicating the method is not supported.
- */
 export const GET = async () => {
   return Response.json({ message: "Method not supported" }, { headers });
 };
 
-/**
- * Handles OPTIONS requests to ensure CORS works.
- * @returns A response with the appropriate headers.
- */
 export const OPTIONS = async () => Response.json(null, { headers });
 
-/**
- * Handles POST requests to create a new challenge.
- * @param req - The request object.
- * @returns A response with the result of the challenge creation.
- */
 export const POST = async (req: Request) => {
   try {
     const requestUrl = new URL(req.url);
-    const { vert_set, hor_set, amount } =
+    const { position, amount } =
       validatedCreateChallengeQueryParams(requestUrl);
     const body: NextActionPostRequest = await req.json();
 
@@ -60,7 +46,7 @@ export const POST = async (req: Request) => {
     }
 
     console.log(
-      `Creating challenge with vert_set: ${vert_set}, hor_set: ${hor_set}, amount: ${amount} and signature: ${signature}, account: ${account.toBase58()}`
+      `Creating challenge with position: ${position}, amount: ${amount} and signature: ${signature}, account: ${account.toBase58()}`
     );
 
     // Create user if not exists
@@ -71,14 +57,11 @@ export const POST = async (req: Request) => {
       throw "Failed to create user";
     }
 
-    const gridIndex = calculateGridIndex(vert_set, hor_set) + 1;
-
-    // Create challenge
     let challengeId: string;
     try {
       challengeId = await createChallenge(
         account.toBase58(),
-        gridIndex,
+        position,
         amount,
         signature
       );

@@ -21,11 +21,6 @@ import {
 // Create the standard headers for this route (including CORS)
 const headers = createActionHeaders();
 
-/**
- * Handles GET requests to provide metadata for creating a challenge.
- * @param req - The incoming request object.
- * @returns A JSON response containing action metadata.
- */
 export const GET = async (req: Request) => {
   try {
     const requestUrl = new URL(req.url);
@@ -33,28 +28,19 @@ export const GET = async (req: Request) => {
       {
         type: "transaction",
         label: "Create Challenge",
-        href: "/api/actions/create-challenge?vert_set={vert_set}&hor_set={hor_set}&amount={amount}",
+        href: "/api/actions/create-challenge?position={position}&amount={amount}",
         parameters: [
           {
-            name: "vert_set",
-            label: "(Top, Middle, Bottom)",
+            name: "position",
+            label: "select position",
             required: true,
-            type: "select",
+            type: "radio",
             options: [
-              { value: "top", label: "Top" },
-              { value: "middle", label: "Middle" },
-              { value: "bottom", label: "Bottom" },
-            ],
-          },
-          {
-            name: "hor_set",
-            label: "(Left, Center, Right)",
-            required: true,
-            type: "select",
-            options: [
-              { value: "left", label: "Left" },
+              { value: "top-left", label: "Top-Left" },
+              { value: "top-right", label: "Top-Right" },
               { value: "center", label: "Center" },
-              { value: "right", label: "Right" },
+              { value: "bottom-left", label: "Bottom-Left" },
+              { value: "bottom-right", label: "Bottom-Right" },
             ],
           },
           {
@@ -68,10 +54,10 @@ export const GET = async (req: Request) => {
     ];
     const payload: ActionGetResponse = {
       type: "action",
-      title: "Goalie",
+      title: "Freekick",
       icon: new URL("/logo.png", requestUrl.origin).toString(),
       description:
-        "Create a new challenge for the Goalie game. \nSelect the position where you want to shoot, and let your friend try to block your goal.",
+        "Create a new challenge for the Freekick game. \nSelect the position where you want to shoot, and let your friend try to block your goal.",
       label: "Create Challenge",
       links: { actions },
     };
@@ -85,21 +71,12 @@ export const GET = async (req: Request) => {
   }
 };
 
-/**
- * Handles OPTIONS requests to ensure CORS works for blinks.
- * @returns A JSON response with standard headers.
- */
 export const OPTIONS = async () => Response.json(null, { headers });
 
-/**
- * Handles POST requests to create a new challenge.
- * @param req - The incoming request object.
- * @returns A JSON response containing the transaction details.
- */
 export const POST = async (req: Request) => {
   try {
     const requestUrl = new URL(req.url);
-    const { vert_set, hor_set, amount } =
+    const { position, amount } =
       validatedCreateChallengeQueryParams(requestUrl);
     const body: ActionPostRequest = await req.json();
 
@@ -137,11 +114,11 @@ export const POST = async (req: Request) => {
       fields: {
         type: "transaction",
         transaction,
-        message: "Create Goalie Challenge",
+        message: "Create Freekick Challenge",
         links: {
           next: {
             type: "post",
-            href: `/api/actions/create-challenge/next-action?vert_set=${vert_set}&hor_set=${hor_set}&amount=${amount}`,
+            href: `/api/actions/create-challenge/next-action?position=${position}&amount=${amount}`,
           },
         },
       },

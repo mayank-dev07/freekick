@@ -15,49 +15,17 @@ import { PublicKey } from "@solana/web3.js";
 // Create the standard headers for this route (including CORS)
 const headers = createActionHeaders();
 
-/**
- * Handles GET requests.
- * @param req - The request object.
- * @returns A response indicating the method is not supported.
- */
 export const GET = async (req: Request) => {
   console.log(req);
   return Response.json({ message: "Method not supported" }, { headers });
 };
 
-/**
- * Handles OPTIONS requests to ensure CORS works.
- * @returns A response with the appropriate headers.
- */
 export const OPTIONS = async () => Response.json(null, { headers });
 
-/**
- * Handles POST requests to create a new challenge.
- * @param req - The request object.
- * @returns A response with the result of the challenge creation.
- */
-/**
- * Handles the POST request for the next action in a challenge.
- *
- * @param req - The incoming request object.
- * @returns A response object containing the result of the action.
- *
- * @throws Will throw an error if the provided "account" or "signature" is invalid.
- * @throws Will throw an error if fetching the challenge fails.
- * @throws Will throw an error if adding the challenger fails.
- *
- * The function performs the following steps:
- * 1. Validates the query parameters from the request URL.
- * 2. Parses and validates the request body.
- * 3. Fetches the challenge based on the provided challenge ID.
- * 4. Adds the challenger to the challenge.
- * 5. Returns a success response if all steps are completed successfully.
- * 6. Returns an error response if any step fails.
- */
 export const POST = async (req: Request) => {
   try {
     const requestUrl = new URL(req.url);
-    const { vert_set, hor_set, bet, challengeId } =
+    const { position, bet, challengeId } =
       validatedPOSTChallengeQueryParams(requestUrl);
     const body: NextActionPostRequest = await req.json();
 
@@ -94,10 +62,8 @@ export const POST = async (req: Request) => {
       return Response.json(actionError, { status: 404, headers });
     }
     console.log("challenge");
-    console.log(vert_set, hor_set, bet, challengeId);
+    console.log(position, bet, challengeId);
 
-    const gridIndex = calculateGridIndex(vert_set, hor_set) + 1;
-    console.log("selected grid", gridIndex);
     console.log(challenge);
 
     try {
@@ -105,8 +71,8 @@ export const POST = async (req: Request) => {
         challengeId,
         account.toBase58(),
         signature,
-        gridIndex,
-        challenge.gridIndex === gridIndex
+        position,
+        challenge.position === position
       );
     } catch (err) {
       console.error("Error adding challenger:", err);
