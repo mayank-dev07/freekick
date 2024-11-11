@@ -83,7 +83,7 @@ export const POST = async (req: Request) => {
       type: "completed",
       title: "Challenge Accepted",
       description: `You have successfully accepted the challenge by ${challenge.wallet}`,
-      icon: new URL("/logo.png", requestUrl.origin).toString(),
+      icon: new URL("/logo.jpeg", requestUrl.origin).toString(),
       label: "Challenge Accepted",
     };
 

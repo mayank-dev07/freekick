@@ -53,7 +53,7 @@ export const GET = async (req: Request) => {
         type: "completed",
         title: "Challenge Full",
         description: `The challenge has already reached the maximum number of challengers. Results and rewards will be distributed soon.`,
-        icon: new URL("/logo.png", requestUrl.origin).toString(),
+        icon: new URL("/logo.jpeg", requestUrl.origin).toString(),
         disabled: true,
         label: "Challenge Full",
       };
@@ -67,7 +67,7 @@ export const GET = async (req: Request) => {
         description: `The challenge has already been completed.\nWinners: ${challenge.correctGuessesSig.join(
           ", "
         )}`,
-        icon: new URL("/logo.png", requestUrl.origin).toString(),
+        icon: new URL("/logo.jpeg", requestUrl.origin).toString(),
         disabled: true,
         label: "Challenge Completed",
       };
@@ -111,7 +111,7 @@ export const GET = async (req: Request) => {
     const payload: ActionGetResponse = {
       type: "action",
       title: "Goalie",
-      icon: new URL("/logo.png", requestUrl.origin).toString(),
+      icon: new URL("/logo.jpeg", requestUrl.origin).toString(),
       description: `Accept the challenge and guess the grid where the striker is shooting. Challenged by ${challenger}`,
       label: "Accept Challenge",
       links: { actions },

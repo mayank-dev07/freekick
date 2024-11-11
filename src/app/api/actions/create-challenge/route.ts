@@ -55,7 +55,7 @@ export const GET = async (req: Request) => {
     const payload: ActionGetResponse = {
       type: "action",
       title: "Freekick",
-      icon: new URL("/logo.png", requestUrl.origin).toString(),
+      icon: new URL("/logo.jpeg", requestUrl.origin).toString(),
       description:
         "Create a new challenge for the Freekick game. \nSelect the position where you want to shoot, and let your friend try to block your goal.",
       label: "Create Challenge",
